@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { Home, Layout, Target, BookOpen, BarChart3, User, Settings, Award, ShieldCheck, Users } from 'lucide-react'
+import { Home, Layout, Target, BookOpen, BarChart3, User, Award, ShieldCheck, Sparkles } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 
 function Sidebar() {
@@ -24,33 +24,30 @@ function Sidebar() {
   if (user && isAdmin) links.push({ path: '/admin', label: 'מנהל', icon: <ShieldCheck size={18} /> })
 
   return (
-    <aside style={{ background: '#FFFFFF', borderRight: '1px solid #E0E0E0', minHeight: '100vh', padding: '24px 16px' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ margin: 0, fontSize: 24 }}>BoostMe</h1>
-        <p style={{ margin: '8px 0 0', color: '#616161' }}>ניהול ביטחון עצמי לעסקים</p>
+    <aside className="sidebar">
+      <div className="brand-lockup">
+        <span className="brand-mark"><Sparkles size={18} /></span>
+        <div>
+          <h1>BoostMe</h1>
+          <p>ביטחון מקצועי, כל יום</p>
+        </div>
       </div>
-      <nav style={{ display: 'grid', gap: 8 }}>
+      <nav className="sidebar-nav" aria-label="ניווט ראשי">
         {links.map(link => (
           <NavLink
             key={link.path}
             to={link.path}
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '12px 16px',
-              borderRadius: 12,
-              color: isActive ? '#FFFFFF' : '#212121',
-              background: isActive ? '#4CAF50' : 'transparent',
-              fontWeight: isActive ? 700 : 500,
-              textDecoration: 'none'
-            })}
+            className={({ isActive }) => `sidebar-link${isActive ? ' is-active' : ''}`}
           >
             {link.icon}
             {link.label}
           </NavLink>
         ))}
       </nav>
+      <div className="sidebar-tip">
+        <span>הצעד הבא שלך</span>
+        <strong>5 דקות של נוכחות</strong>
+      </div>
     </aside>
   )
 }
