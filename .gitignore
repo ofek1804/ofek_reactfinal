@@ -1,0 +1,6 @@
+node_modules/
+.codex-temp/
+.cache/
+.env
+.env.local
+*.log

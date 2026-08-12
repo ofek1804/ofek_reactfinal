@@ -2,9 +2,48 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 
 const AuthContext = createContext(null)
 const STORAGE_KEY = 'boostme_auth_user'
-const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@boostme.com'
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@test.com'
 
-function createUserData({ name, email, isAdmin = false, company = 'BoostMe', title = 'מומחה לניהול', bio = 'מפתח מיומן בביטחון עסקי', avatarUrl = '', phone = '', industry = 'ניהול מקצועי' }) {
+export const DEMO_USERS = [
+  {
+    role: 'admin',
+    label: 'Admin',
+    email: 'admin@test.com',
+    password: 'Admin123!',
+    name: 'Admin',
+    isAdmin: true,
+    company: 'BoostMe',
+    title: 'מנהל מערכת',
+    bio: 'משתמש דמו לניהול ובדיקת הרשאות המערכת.',
+    phone: '+972-50-0000001',
+    industry: 'ניהול מערכת'
+  },
+  {
+    role: 'user',
+    label: 'User',
+    email: 'user@test.com',
+    password: 'User123!',
+    name: 'משתמש בדיקה',
+    isAdmin: false,
+    company: 'BoostMe',
+    title: 'משתמש מקצועי',
+    bio: 'משתמש דמו לבדיקת תהליך משתמש מלא.',
+    phone: '+972-50-1234567',
+    industry: 'מנהיגות עסקית'
+  }
+]
+
+function createUserData({
+  name,
+  email,
+  isAdmin = false,
+  company = 'BoostMe',
+  title = 'מומחה לניהול',
+  bio = 'מפתח מיומן בביטחון עסקי',
+  avatarUrl = '',
+  phone = '',
+  industry = 'ניהול מקצועי'
+}) {
   return {
     email: email.trim().toLowerCase(),
     name: name.trim(),
@@ -16,6 +55,11 @@ function createUserData({ name, email, isAdmin = false, company = 'BoostMe', tit
     phone,
     industry
   }
+}
+
+function findDemoUser(email, password) {
+  const normalized = email.trim().toLowerCase()
+  return DEMO_USERS.find((demoUser) => demoUser.email === normalized && demoUser.password === password)
 }
 
 export function AuthProvider({ children }) {
@@ -41,6 +85,14 @@ export function AuthProvider({ children }) {
     if (!email || !password) {
       return { error: 'נא למלא אימייל וסיסמה' }
     }
+
+    const demoUser = findDemoUser(email, password)
+    if (demoUser) {
+      const nextUser = createUserData(demoUser)
+      persistUser(nextUser)
+      return { user: nextUser }
+    }
+
     const normalized = email.trim().toLowerCase()
     const isAdmin = normalized === ADMIN_EMAIL.toLowerCase()
     const nextUser = createUserData({
